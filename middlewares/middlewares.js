@@ -48,7 +48,7 @@ export const verifyUpdateUser = (req, res, next) => {
     if (userAddress.length < 10 || userAddress.length > 25) { 
       throw {
         code: 400,
-        message: 'La dirección debe tener entre 10 y 25 caracteres.'
+        message: 'La dirección debe tener entre 5 y 25 caracteres.'
       }
     }
 
@@ -140,7 +140,7 @@ export const verifyRegisterUser = (req, res, next) => {
     if (userAddress.length < 10 || userAddress.length > 25) { 
       throw {
         code: 400,
-        message: 'La dirección debe tener entre 10 y 25 caracteres.'
+        message: 'La dirección debe tener entre 5 y 25 caracteres.'
       }
     }
 

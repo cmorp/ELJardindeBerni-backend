@@ -44,12 +44,12 @@ const userLogin = async (req, res) => {
 const userRegister = async (req, res) => {
   try {
     const {
-      profile_id, 
+      profile_id,
       userName,
       userEmail,
       userPhone,
       password,
-      address,
+      userAddress,
       region,
       city
     } = req.body
@@ -67,7 +67,7 @@ const userRegister = async (req, res) => {
       profile_id,
       userName,
       userEmail,
-      address,
+      userAddress,
       encryptedPassword,
       userPhone,
       city,
@@ -292,7 +292,7 @@ const getFavByUser = async (req, res) => {
 export const jbController = {
   // Autenticación
   userLogin,
- userRegister,
+  userRegister,
   updateUser,
   getUserById,
 
