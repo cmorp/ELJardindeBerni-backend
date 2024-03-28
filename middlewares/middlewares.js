@@ -4,19 +4,68 @@ import { jbModel } from '../config/consultas.js'
 
 export const verifyUpdateUser = (req, res, next) => {
   try {
-    const { username, useremail, userphone, useraddress, region, city } =
+    const { userName, userEmail, userPhone, userAddress, region, city } =
       req.body
     if (
-      !username ||
-      !useremail ||
-      !userphone ||
-      !useraddress ||
+      !userName ||
+      !userEmail ||
+      !userPhone ||
+      !userAddress ||
       !region ||
       !city
     ) {
       throw { code: 400, message: 'Faltan campos requeridos.' }
     }
 
+    if (userName.length < 3 || userName.length > 50) {
+      throw {
+        code: 400,
+        message: 'El nombre de usuario debe tener entre 3 y 50 caracteres.'
+      }
+    }
+
+    if (userEmail.length < 10 || userEmail.length > 50) { 
+      throw {
+        code: 400,
+        message: 'El correo electrónico debe tener entre 10 y 50 caracteres.'
+      }
+    }
+
+    if (password.length < 6 || password.length > 60) {
+      throw {
+        code: 400,
+        message: 'La contraseña debe tener entre 6 y 60 caracteres.'
+      }
+    }
+
+    if (userPhone.length < 8 || userPhone.length > 12) { 
+      throw {
+        code: 400,
+        message: 'El teléfono debe tener entre 8 y 12 caracteres.'
+      }
+    }
+
+    if (userAddress.length < 10 || userAddress.length > 25) { 
+      throw {
+        code: 400,
+        message: 'La dirección debe tener entre 10 y 25 caracteres.'
+      }
+    }
+
+    if (region.length < 5 || region.length > 25) { 
+      throw {
+        code: 400,
+        message: 'La región debe tener entre 5 y 25 caracteres.'
+      }
+    }
+
+    if (city.length < 5 || city.length > 25) { 
+      throw {
+        code: 400,
+        message: 'La ciudad debe tener entre 5 y 25 caracteres.'
+      }
+    }
+    
     const isEmailValid =
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(useremail)
     if (!isEmailValid) {
@@ -42,7 +91,7 @@ export const verifyRegisterUser = (req, res, next) => {
       userPhone,
       password,
       password2,
-      address,
+      userAddress,
       region,
       city
     } = req.body
@@ -53,11 +102,60 @@ export const verifyRegisterUser = (req, res, next) => {
       !userPhone ||
       !password ||
       !password2 ||
-      !address ||
+      !userAddress ||
       !region ||
       !city
     ) {
       throw { code: 400, message: 'Faltan campos requeridos.' }
+    }
+
+    if (userName.length < 3 || userName.length > 50) {
+      throw {
+        code: 400,
+        message: 'El nombre de usuario debe tener entre 3 y 50 caracteres.'
+      }
+    }
+
+    if (userEmail.length < 10 || userEmail.length > 50) { 
+      throw {
+        code: 400,
+        message: 'El correo electrónico debe tener entre 10 y 50 caracteres.'
+      }
+    }
+
+    if (password.length < 6 || password.length > 60) {
+      throw {
+        code: 400,
+        message: 'La contraseña debe tener entre 6 y 60 caracteres.'
+      }
+    }
+
+    if (userPhone.length < 8 || userPhone.length > 12) { 
+      throw {
+        code: 400,
+        message: 'El teléfono debe tener entre 8 y 12 caracteres.'
+      }
+    }
+
+    if (userAddress.length < 10 || userAddress.length > 25) { 
+      throw {
+        code: 400,
+        message: 'La dirección debe tener entre 10 y 25 caracteres.'
+      }
+    }
+
+    if (region.length < 5 || region.length > 25) { 
+      throw {
+        code: 400,
+        message: 'La región debe tener entre 5 y 25 caracteres.'
+      }
+    }
+
+    if (city.length < 5 || city.length > 25) { 
+      throw {
+        code: 400,
+        message: 'La ciudad debe tener entre 5 y 25 caracteres.'
+      }
     }
 
     const isEmailValid =
