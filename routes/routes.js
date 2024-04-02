@@ -28,5 +28,10 @@ router.get('/private/users/favs', verifyCredentials, jbController.getFavByUser)
 router.post('/private/users/favs', verifyCredentials, jbController.addToFav)
 router.delete('/private/users/favs', verifyCredentials, jbController.deleteFav)
 
+// RUTAS PRIVADAS PARA CARRITO DEL USUARIO
+router.get('/private/users/cart/:userId', verifyCredentials, jbController.getCart)
+router.post('/private/users/cart/:productId', verifyCredentials, jbController.addProductToCart)
+router.delete('/private/users/cart/:userId/:productId', verifyCredentials, jbController.deleteProductFromCart)
+
 
 export default router

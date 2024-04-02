@@ -47,3 +47,12 @@ CREATE TABLE fav (
   FOREIGN KEY (user_id) REFERENCES users(user_id),
   FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
+
+CREATE TABLE userCart (
+  cart_id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id BIGINT NOT NULL,
+  cantidad INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (product_id) REFERENCES products(product_id)
+); 

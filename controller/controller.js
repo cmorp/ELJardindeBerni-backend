@@ -288,6 +288,41 @@ const getFavByUser = async (req, res) => {
 
 
 
+// CARRITO
+const getCart = async (req, res) => {
+  const { userId } = req.params
+  try {
+    const cart = await jbModel.getCartByUserId(userId)
+    res.status(201).json(cart) 
+  } catch (error) {
+    res.status(500).json({ message: "Error interno del servidor al obtener carrito." })
+  }
+}
+
+const addProductToCart = async (req, res) => {
+  const { productId } = req.params
+  const { userId, cantidad } = req.body
+  try {
+    const addedToCart = await jbModel.addToCart(userId, productId, cantidad)
+    if (addedToCart.length <= 0) res.status(204).json({ message: "No se pudo agregar el producto, inténtelo nuevamente." })
+    res.status(201).json(addedToCart)
+  } catch (error) {
+    res.status(500).json({ message: "Error interno del servidor al agregar producto." })
+  }
+}
+
+const deleteProductFromCart = async (req, res) => {
+  const { userId, productId } = req.params
+  try {
+    await Cart.removeFromCart(userId, productId);
+    res.status(200).json({ message: 'Producto eliminado exitosamente.' })
+  } catch {
+    res.status(500).json({ message: 'Error interno del servidor al eliminar producto.' })
+  }
+}
+
+
+
 // CONTROLADOR PRINCIPAL
 export const jbController = {
   // Autenticación
@@ -304,5 +339,10 @@ export const jbController = {
   // Favoritos
   addToFav,
   deleteFav,
-  getFavByUser
+  getFavByUser,
+
+  // Carrito
+  getCart,
+  addProductToCart,
+  deleteProductFromCart
 }
