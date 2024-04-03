@@ -31,6 +31,7 @@ router.delete('/private/users/favs', verifyCredentials, jbController.deleteFav)
 // RUTAS PRIVADAS PARA CARRITO DEL USUARIO
 router.get('/private/users/cart/:userId', verifyCredentials, jbController.getCart)
 router.post('/private/users/cart/:productId', verifyCredentials, jbController.addProductToCart)
+router.post('/private/users/cart', verifyCredentials, jbController.modificateProductInCart)
 router.delete('/private/users/cart/:userId/:productId', verifyCredentials, jbController.deleteProductFromCart)
 
 

@@ -2,7 +2,6 @@ import Jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import { jbModel } from '../config/consultas.js'
 
-
 // AUTENTICACIÓN DE USUARIO
 const userLogin = async (req, res) => {
   try {
@@ -141,23 +140,21 @@ const getUserById = async (req, res) => {
   }
 }
 
-
-
 // PRODUCTOS
 const addProduct = async (req, res) => {
   try {
     const { productName, price, description, image } = req.body
-    const products = await jbModel.addProduct({
+    const products = await jbModel.addProduct(
       productName,
       price,
       description,
       image
+    )
+    return res.status(201).json({
+      ok: true,
+      message: 'El producto se ha agregado con éxito.',
+      result: products
     })
-    return res
-      .status(201).json({
-        ok: true, message: 'El producto se ha agregado con éxito.',
-        result: products
-      })
   } catch (error) {
     console.error(error)
     return res
@@ -205,8 +202,6 @@ const getProducts = async (req, res) => {
       .json({ ok: false, message: 'Error al obtener los productos.' })
   }
 }
-
-
 
 // FAVORITOS
 const addToFav = async (req, res) => {
@@ -286,16 +281,16 @@ const getFavByUser = async (req, res) => {
   }
 }
 
-
-
 // CARRITO
 const getCart = async (req, res) => {
   const { userId } = req.params
   try {
     const cart = await jbModel.getCartByUserId(userId)
-    res.status(201).json(cart) 
+    res.status(201).json(cart)
   } catch (error) {
-    res.status(500).json({ message: "Error interno del servidor al obtener carrito." })
+    res
+      .status(500)
+      .json({ message: 'Error interno del servidor al obtener carrito.' })
   }
 }
 
@@ -304,24 +299,93 @@ const addProductToCart = async (req, res) => {
   const { userId, cantidad } = req.body
   try {
     const addedToCart = await jbModel.addToCart(userId, productId, cantidad)
-    if (addedToCart.length <= 0) res.status(204).json({ message: "No se pudo agregar el producto, inténtelo nuevamente." })
+    if (addedToCart.length <= 0)
+      res.status(204).json({
+        message: 'No se pudo agregar el producto, inténtelo nuevamente.'
+      })
     res.status(201).json(addedToCart)
   } catch (error) {
-    res.status(500).json({ message: "Error interno del servidor al agregar producto." })
+    res
+      .status(500)
+      .json({ message: 'Error interno del servidor al agregar producto.' })
   }
 }
 
 const deleteProductFromCart = async (req, res) => {
   const { userId, productId } = req.params
   try {
-    await Cart.removeFromCart(userId, productId);
+    await jbModel.removeFromCart(userId, productId)
     res.status(200).json({ message: 'Producto eliminado exitosamente.' })
   } catch {
-    res.status(500).json({ message: 'Error interno del servidor al eliminar producto.' })
+    res
+      .status(500)
+      .json({ message: 'Error interno del servidor al eliminar producto.' })
   }
 }
 
+const modificateProductInCart = async (req, res) => {
+  const { userId, products } = req.body
+  try {
+    const cart = await jbModel.getCartByUserId(userId)
 
+    let productsInserted = []
+    let productsUpdated = []
+    let productsDeleted = []
+
+    for (let i = 0; i < products.length; i++) {
+      // Buscar si el producto ya está en el carrito
+      const product = cart.find((p) => p.product_id === products[i].product_id)
+
+      // Si el producto ya está en el carrito
+      if (product) {
+        if (products[i].cantidad === 0) {
+          // Validar si la cantidad es 0, para eliminarlo
+          productsDeleted.push(products[i])
+        } else {
+          // Si la cantidad es diferente de 0, actualizar la cantidad
+          productsUpdated.push(products[i])
+        }
+      } else {
+        // Si el producto no está en el carrito, insertarlo
+        if (products[i].cantidad > 0) {
+          productsInserted.push(products[i])
+        }
+      }
+    }
+
+    if (productsDeleted.length > 0) {
+      for (let i = 0; i < productsDeleted.length; i++) {
+        await jbModel.deleteFromCart(userId, productsDeleted[i].product_id)
+      }
+    }
+
+    if (productsInserted.length > 0) {
+      for (let i = 0; i < productsInserted.length; i++) {
+        await jbModel.addToCart(
+          userId,
+          productsInserted[i].product_id,
+          productsInserted[i].cantidad
+        )
+      }
+    }
+
+    if (productsUpdated.length > 0) {
+      for (let i = 0; i < productsUpdated.length; i++) {
+        await jbModel.updateCart(
+          userId,
+          productsUpdated[i].product_id,
+          productsUpdated[i].cantidad
+        )
+      }
+    }
+
+    res.status(200).json({ message: 'Carrito actualizado con éxito.' })
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error interno del servidor al modificar producto.' })
+  }
+}
 
 // CONTROLADOR PRINCIPAL
 export const jbController = {
@@ -344,5 +408,6 @@ export const jbController = {
   // Carrito
   getCart,
   addProductToCart,
-  deleteProductFromCart
+  deleteProductFromCart,
+  modificateProductInCart
 }

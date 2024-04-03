@@ -148,33 +148,54 @@ const deleteFavById = async (user_id, product_id) => {
 
 // CARRITO
 const addToCart = async (userId, productId, cantidad) => {
-  const query = 'INSERT INTO userCart (user_id, product_id, cantidad) VALUES ($1, $2, $3) RETURNING *';
-    try {
-        const response = await pool.query(query, [userId, productId, cantidad]);
-        return response.rows[0];
-    } catch (error) {
-        throw new Error(error);
-    }
+  const query =
+    'INSERT INTO userCart (user_id, product_id, cantidad) VALUES ($1, $2, $3) RETURNING *'
+  try {
+    const response = await pool.query(query, [userId, productId, cantidad])
+    return response.rows[0]
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 const getCartByUserId = async (userId) => {
-  const query = 'SELECT * FROM userCart WHERE user_id = $1';
-    try {
-        const response = await pool.query(query, [userId]);
-        return response.rows;
-    } catch (error) {
-        throw new Error(error);
-    }
+  const query = `SELECT userCart.cart_id,
+      userCart.user_id,
+      products.product_id,
+      userCart.cantidad,
+      products.price,
+      products.image
+    FROM userCart
+        JOIN products on products.product_id = usercart.product_id
+    WHERE user_id = $1
+  `
+  try {
+    const response = await pool.query(query, [userId])
+    return response.rows
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 const deleteFromCart = async (userId, productId) => {
-    const query = 'DELETE FROM userCart WHERE user_id = $1 AND product_id = $2';
-    try {
-        const response = await pool.query(query, [userId, productId]);
-        return response.rows[0];
-    } catch (error) {
-        throw new Error(error);
-    }
+  const query = 'DELETE FROM userCart WHERE user_id = $1 AND product_id = $2'
+  try {
+    const response = await pool.query(query, [userId, productId])
+    return response.rows[0]
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const updateCart = async (userId, productId, cantidad) => {
+  const query =
+    'UPDATE userCart SET cantidad = $1 WHERE user_id = $2 AND product_id = $3'
+  try {
+    const response = await pool.query(query, [cantidad, userId, productId])
+    return response.rows[0]
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 export const jbModel = {
@@ -191,5 +212,6 @@ export const jbModel = {
   checkEmail,
   addToCart,
   deleteFromCart,
-  getCartByUserId
+  getCartByUserId,
+  updateCart
 }
