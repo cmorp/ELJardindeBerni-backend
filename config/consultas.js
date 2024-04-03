@@ -100,7 +100,7 @@ const updateUser = async (
 const getProducts = async () => {
   const query = 'SELECT * FROM products'
   try {
-    const data = await client.query(query)
+    const data = await pool.query(query)
     return data.rows
   } catch (error) {
     throw new Error(error)
